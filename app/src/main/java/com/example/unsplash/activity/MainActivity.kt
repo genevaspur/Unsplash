@@ -1,9 +1,12 @@
 package com.example.unsplash.activity
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ListView
 import com.example.unsplash.R
+import com.example.unsplash.adapter.ImageListAdapter
 import com.example.unsplash.retrofit.RetrofitClient
 import com.example.unsplash.retrofit.RetrofitService
 import com.example.unsplash.vo.ImageVO
@@ -20,6 +23,7 @@ class MainActivity : BaseActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var retrofitService : RetrofitService
 
+    private lateinit var listView: ListView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +31,19 @@ class MainActivity : BaseActivity() {
 
         initRetrofit()
 
+        listView = findViewById(R.id.listView)
+
+
+        val context = this
         // IO or MAIN
         CoroutineScope(Dispatchers.IO).launch {
 
-            getPhotoList(retrofitService, 10)
+            getPhotoList(retrofitService, 10, context)
 
         }
+
+
+
 
 
 
@@ -44,7 +55,7 @@ class MainActivity : BaseActivity() {
         retrofitService = retrofit.create(RetrofitService::class.java)
     }
 
-    private fun getPhotoList(service: RetrofitService, count: Int) {
+    private fun getPhotoList(service: RetrofitService, count: Int, context: Context) {
 
         // TODO COUNT
         service.requestRandomPhoto(client_id, count).enqueue(object : Callback<ArrayList<ImageVO>> {
@@ -58,11 +69,10 @@ class MainActivity : BaseActivity() {
                 response: Response<ArrayList<ImageVO>>
             ) {
 
-                var list = response.body()
+                val list = response.body()
                 if (list != null) {
-                    for (a in list) {
-                        Log.d("TEST1234", a.toString())
-                    }
+                    // TODO
+                    listView.adapter = ImageListAdapter(context, list)
                 }
 
             }
