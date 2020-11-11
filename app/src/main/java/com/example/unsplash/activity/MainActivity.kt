@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ListView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unsplash.R
 import com.example.unsplash.adapter.ImageListAdapter
+import com.example.unsplash.listener.ImageScrollListener
 import com.example.unsplash.retrofit.RetrofitClient
 import com.example.unsplash.retrofit.RetrofitService
 import com.example.unsplash.vo.ImageVO
@@ -23,7 +27,24 @@ class MainActivity : BaseActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var retrofitService : RetrofitService
 
-    private lateinit var listView: ListView
+    private lateinit var rv: RecyclerView
+    private lateinit var imageListAdapter: ImageListAdapter
+
+    var pageNum = 1
+
+    private val onLoadMoreListener = object:ImageScrollListener.OnLoadMoreListener {
+
+        override fun onLoadMore() {
+            pageNum++
+            // IO or MAIN
+            CoroutineScope(Dispatchers.IO).launch {
+
+                getPhotoList(retrofitService, 10)
+
+            }
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,19 +52,14 @@ class MainActivity : BaseActivity() {
 
         initRetrofit()
 
-        listView = findViewById(R.id.listView)
+        rv = findViewById(R.id.recyclerView)
 
+        val linearLayoutManager = LinearLayoutManager(this)
+        rv.layoutManager = linearLayoutManager
+        imageListAdapter = ImageListAdapter(this, linearLayoutManager, onLoadMoreListener)
+        imageListAdapter.setRecyclerView(rv)
 
-        val context = this
-        // IO or MAIN
-        CoroutineScope(Dispatchers.IO).launch {
-
-            getPhotoList(retrofitService, 10, context)
-
-        }
-
-
-
+        getPhotoList(retrofitService, 10)
 
 
 
@@ -55,13 +71,13 @@ class MainActivity : BaseActivity() {
         retrofitService = retrofit.create(RetrofitService::class.java)
     }
 
-    private fun getPhotoList(service: RetrofitService, count: Int, context: Context) {
+    private fun getPhotoList(service: RetrofitService, count: Int) {
 
         // TODO COUNT
         service.requestRandomPhoto(client_id, count).enqueue(object : Callback<ArrayList<ImageVO>> {
 
             override fun onFailure(call: Call<ArrayList<ImageVO>>, t: Throwable) {
-                Log.d("TEST1234", "$t")
+                Log.d("@@@@@@@@@@@@@@@@@@@@@@@", "$t")
             }
 
             override fun onResponse(
@@ -71,8 +87,16 @@ class MainActivity : BaseActivity() {
 
                 val list = response.body()
                 if (list != null) {
-                    // TODO
-                    listView.adapter = ImageListAdapter(context, list)
+
+                    if (pageNum == 1) {
+                        imageListAdapter.list = list
+                        rv.adapter = imageListAdapter
+                    } else {
+                        imageListAdapter.addItemMore(list)
+                    }
+
+                    imageListAdapter.notifyDataSetChanged()
+
                 }
 
             }

@@ -10,6 +10,7 @@ data class ImageVO (
     var likes: Int,
     var liked_by_user: Boolean,
     var description: String,
-    var urls: ImageUrlVO
+    var urls: ImageUrlVO,
+    var user: UserVO
 
 )

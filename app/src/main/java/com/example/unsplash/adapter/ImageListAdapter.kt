@@ -1,39 +1,49 @@
 package com.example.unsplash.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.unsplash.R
+import com.example.unsplash.listener.ImageScrollListener
+import com.example.unsplash.viewholder.ImageViewHolder
 import com.example.unsplash.vo.ImageVO
 
-class ImageListAdapter constructor(val context: Context, val data: ArrayList<ImageVO>) : BaseAdapter() {
+class ImageListAdapter(
+        private val context: Context,
+        private val linearLayoutManager: LinearLayoutManager,
+        private val onLoadMoreListener: ImageScrollListener.OnLoadMoreListener
+) : RecyclerView.Adapter<ImageViewHolder>() {
 
+    var list = mutableListOf<ImageVO>()
 
-    override fun getCount(): Int {
-        return data.size
+    override fun getItemCount(): Int {
+        return list.size
     }
 
-    override fun getItem(position: Int): Any {
-        return data[position]
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        holder.bind(list[position])
     }
 
-    override fun getItemId(position: Int): Long {
-        return 0
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+        val view = LayoutInflater.from(context).inflate(R.layout.image_row, parent, false)
+        return ImageViewHolder(view)
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    fun setRecyclerView(view: RecyclerView) {
+        view.addOnScrollListener(ImageScrollListener(linearLayoutManager, onLoadMoreListener))
+    }
 
-        val itemRow = LayoutInflater.from(context).inflate(R.layout.image_row, parent, false)
-        val imageView = itemRow.findViewById<ImageView>(R.id.imageView)
-        val imageVO = data[position]
-
-        Glide.with(context).load(imageVO.urls.small).into(imageView)
-
-        return itemRow
+    fun addItemMore(newItem: List<ImageVO>) {
+        list.addAll(newItem)
+        notifyItemRangeChanged(0, list.size)
     }
 
 }
