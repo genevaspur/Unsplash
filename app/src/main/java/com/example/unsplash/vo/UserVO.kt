@@ -7,6 +7,7 @@ data class UserVO(
     var name: String,
     var first_name: String,
     var last_name: String,
-    var bio: String
+    var bio: String,
+    var profile_image: ProfileImageVO
 
 )

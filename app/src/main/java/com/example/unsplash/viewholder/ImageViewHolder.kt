@@ -2,7 +2,7 @@ package com.example.unsplash.viewholder
 
 import android.view.View
 import android.widget.ImageView
-import androidx.cardview.widget.CardView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.unsplash.R
@@ -13,11 +13,16 @@ class ImageViewHolder(
 ) : RecyclerView.ViewHolder(itemView) {
 
     private val imageView: ImageView = itemView.findViewById(R.id.imageView)
+    private val userName: TextView = itemView.findViewById(R.id.userName)
 
     fun bind(imageVO: ImageVO) {
+
         Glide.with(itemView)
-            .load(imageVO.urls.regular)
-            .into(imageView)
+                .load(imageVO.urls.regular)
+                .into(imageView)
+
+        userName.text = imageVO.user.name
+
     }
 
 }

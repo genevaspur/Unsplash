@@ -1,12 +1,19 @@
 package com.example.unsplash.listener
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
+
 
 class ImageScrollListener(
         private val linearLayoutManager: LinearLayoutManager,
         private val onLoadMoreListener: OnLoadMoreListener?
 ) : RecyclerView.OnScrollListener() {
+
+    companion object {
+        var isLoading = false
+    }
 
     var visibleThreshold = 5
     var visibleItemCount = 0
@@ -22,7 +29,8 @@ class ImageScrollListener(
         firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
         lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
 
-        if ( (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold) ) {
+        if ( !isLoading && (lastVisibleItem + visibleThreshold) > totalItemCount ) {
+            isLoading = true
             onLoadMoreListener?.onLoadMore()
         }
 
