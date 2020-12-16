@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface RetrofitService {
 
     @GET("/photos/random")
-    suspend fun requestRandomPhoto(
+    fun requestRandomPhoto(
         @Query("client_id") client_id: String,
         @Query("count") count: Int
     ) : Call<List<ImageVO>>

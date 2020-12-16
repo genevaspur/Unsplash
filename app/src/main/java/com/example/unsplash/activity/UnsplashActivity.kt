@@ -8,7 +8,9 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.unsplash.R
+import com.example.unsplash.adapter.BaseImageListAdapter
 import com.example.unsplash.adapter.ImageListAdapter
 import com.example.unsplash.database.UnsplashDB
 import com.example.unsplash.database.entity.UnsplashEntity
@@ -48,13 +50,22 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
         imageListAdapter = ImageListAdapter(this, linearLayoutManager, onLoadMoreListener)
         imageListAdapter.setRecyclerView(rv)
 
-        imageListAdapter.setItemClickListener(object : ImageListAdapter.ItemClickListener {
+        imageListAdapter.setItemClickListener(object : BaseImageListAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
                 imageClickHandler(view, position)
             }
         })
 
-        vm.getPhotoList(imageListAdapter, rv, 10)
+        rv.adapter = imageListAdapter
+
+        // TODO not work
+        (rv.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+
+        vm.getPhotoList(10)
+
+        vm.imageData.observe(this) {
+            imageListAdapter.addMoreItem(it)
+        }
 
         selectBtn.setOnClickListener {
             vm.selectDbAll()
@@ -62,21 +73,18 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
 
     }
 
-
-
     private val onLoadMoreListener = object:ImageScrollListener.OnLoadMoreListener {
 
         override fun onLoadMore() {
             vm.pageNum++
             // IO or MAIN
             CoroutineScope(Dispatchers.IO).launch {
-                vm.getPhotoList(imageListAdapter, rv, 10)
+                vm.getPhotoList(10)
             }
         }
 
     }
 
     private fun imageClickHandler(view: View, position: Int) = vm.insertDb(view)
-
 
 }

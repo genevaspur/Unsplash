@@ -43,17 +43,13 @@ class UnsplashViewModel(
         }
     }
 
-    fun getPhotoList(imageListAdapter: ImageListAdapter, rv: RecyclerView, count: Int) {
+    fun getPhotoList(count: Int) {
         launchCoroutine {
-            searchPhotoList(imageListAdapter, rv, count)
+            searchPhotoList(count)
         }
     }
 
-    private suspend fun searchPhotoList(
-            imageListAdapter: ImageListAdapter,
-            rv: RecyclerView,
-            count: Int
-    ) {
+    private fun searchPhotoList(count: Int) {
 
         retrofitService.requestRandomPhoto(client_id, count).enqueue(object : Callback<List<ImageVO>> {
             override fun onFailure(call: Call<List<ImageVO>>, t: Throwable) {
@@ -61,17 +57,9 @@ class UnsplashViewModel(
             }
 
             override fun onResponse(call: Call<List<ImageVO>>, response: Response<List<ImageVO>>) {
-                var list = response.body()
-                list?:return
+                val list = response.body()
+                list ?: return
                 _imageData.setElement(list)
-
-                if (pageNum == 1) {
-                    imageListAdapter.list = list as MutableList<ImageVO>
-                    rv.adapter = imageListAdapter
-                } else {
-                    imageListAdapter.addMoreItem(list)
-                }
-                imageListAdapter.notifyDataSetChanged()
             }
         })
 

@@ -15,14 +15,19 @@ class ImageViewHolder(
     private val imageView: ImageView = itemView.findViewById(R.id.imageView)
     private val userName: TextView = itemView.findViewById(R.id.userName)
 
-    fun bind(imageVO: ImageVO) {
+    fun bind(T: Any) {
+        when(T) {
 
-        Glide.with(itemView)
-                .load(imageVO.urls.regular)
-                .into(imageView)
+            T is ImageVO -> {
+                val imageVO = T as ImageVO
+                Glide.with(itemView)
+                        .load(imageVO.urls.regular)
+                        .into(imageView)
 
-        userName.text = imageVO.user.name
+                userName.text = imageVO.user.name
+            }
 
+        }
     }
 
 }

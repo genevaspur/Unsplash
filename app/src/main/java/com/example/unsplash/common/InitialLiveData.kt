@@ -2,7 +2,7 @@ package com.example.unsplash.common
 
 import androidx.lifecycle.LiveData
 
-open class InitialLiveData<T>(value: T) : LiveData<T>() {
+open class InitialLiveData<T>(value: T) : LiveData<T>(value) {
 
     var initialValue: T = value
 
