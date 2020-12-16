@@ -59,7 +59,7 @@ class UnsplashViewModel(
             override fun onResponse(call: Call<List<ImageVO>>, response: Response<List<ImageVO>>) {
                 val list = response.body()
                 list ?: return
-                _imageData.setElement(list)
+                _imageData.addElement(list)
             }
         })
 

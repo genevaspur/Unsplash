@@ -18,6 +18,7 @@ abstract class BindingActivity<VM: BaseViewModel, V: ViewDataBinding> : BaseActi
         super.onCreate(savedInstanceState)
         vm = bindViewModel()
         binding.setVariable(BR.vm, vm)
+        binding.lifecycleOwner = this
     }
 
 

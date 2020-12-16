@@ -1,5 +1,6 @@
 package com.example.unsplash.viewholder
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,14 +18,11 @@ class ImageViewHolder(
 
     fun bind(T: Any) {
         when(T) {
-
-            T is ImageVO -> {
-                val imageVO = T as ImageVO
+            is ImageVO -> {
                 Glide.with(itemView)
-                        .load(imageVO.urls.regular)
+                        .load(T.urls.regular)
                         .into(imageView)
-
-                userName.text = imageVO.user.name
+                userName.text = T.user.name
             }
 
         }

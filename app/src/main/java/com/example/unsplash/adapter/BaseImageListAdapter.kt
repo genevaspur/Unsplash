@@ -44,7 +44,11 @@ abstract class BaseImageListAdapter<T: Any>(
 
     fun addMoreItem(newItem: List<T>) {
 
+        diffUtilCallback.newData = newItem.toMutableList()
+        diffUtilCallback.oldData = list
+
         val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+        list.clear()
         list.addAll(newItem)
         diffResult.dispatchUpdatesTo(this)
         ImageScrollListener.isLoading = false
