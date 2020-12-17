@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unsplash.listener.ImageScrollListener
@@ -25,7 +26,7 @@ abstract class BaseImageListAdapter<T: Any>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
-        return ImageViewHolder(view)
+        return ImageViewHolder(DataBindingUtil.inflate(LayoutInflater.from(context), layoutId, parent, false))
     }
 
     override fun getItemCount() = list.size
