@@ -58,9 +58,6 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
 
         rv.adapter = imageListAdapter
 
-        // TODO not work
-        (rv.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-
         vm.getPhotoList(10)
 
         vm.imageData.observe(this) {

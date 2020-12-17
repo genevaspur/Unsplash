@@ -30,39 +30,12 @@ class UnsplashViewModel(
 
     private var _imageData = ListLiveData<ImageVO, List<ImageVO>>()
 
-    private lateinit var retrofitService : RetrofitService
     var pageNum = 1
-
-    init {
-        initRetrofit()
-    }
-
-    private fun initRetrofit() {
-        retrofitService = RetrofitClient.getInstance().run {
-            create(RetrofitService::class.java)
-        }
-    }
 
     fun getPhotoList(count: Int) {
         launchCoroutine {
-            searchPhotoList(count)
+            unsplashRepository.searchPhotoList(count, _imageData)
         }
-    }
-
-    private fun searchPhotoList(count: Int) {
-
-        retrofitService.requestRandomPhoto(client_id, count).enqueue(object : Callback<List<ImageVO>> {
-            override fun onFailure(call: Call<List<ImageVO>>, t: Throwable) {
-                Log.d("unsplash", "$t")
-            }
-
-            override fun onResponse(call: Call<List<ImageVO>>, response: Response<List<ImageVO>>) {
-                val list = response.body()
-                list ?: return
-                _imageData.addElement(list)
-            }
-        })
-
     }
 
     fun selectDbAll() {
