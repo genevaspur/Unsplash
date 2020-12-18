@@ -7,6 +7,9 @@
         <variable
             name="vo"
             type="com.example.unsplash.vo.ImageVO" />
+        <variable
+            name="bindingAdapter"
+            type="com.example.unsplash.adapter.BindingAdapterKt" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"

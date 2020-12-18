@@ -35,7 +35,7 @@ const val client_id = "RRhsjwbgzMem817xMG21l98m1P9Fj0z5c2UE3mNOFSw"  // 2
 
 class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>() {
 
-    private lateinit var rv: RecyclerView
+
     private lateinit var imageListAdapter: ImageListAdapter
 
     override fun setContentId() = R.layout.activity_unsplash
@@ -43,21 +43,18 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_unsplash)
 
-        rv = recyclerView
         val linearLayoutManager = LinearLayoutManager(this)
-        rv.layoutManager = linearLayoutManager
+        recyclerView.layoutManager = linearLayoutManager
         imageListAdapter = ImageListAdapter(this, linearLayoutManager, onLoadMoreListener)
-        imageListAdapter.setRecyclerView(rv)
-
+        imageListAdapter.setRecyclerView(recyclerView)
         imageListAdapter.setItemClickListener(object : BaseImageListAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
                 imageClickHandler(view, position)
             }
         })
 
-        rv.adapter = imageListAdapter
+        recyclerView.adapter = imageListAdapter
 
         vm.getPhotoList(10)
     }

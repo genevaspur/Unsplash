@@ -8,8 +8,8 @@ import com.bumptech.glide.Glide
 import com.example.unsplash.vo.ImageVO
 
 @BindingAdapter("listData")
-fun setImageList(recyclerView: RecyclerView, list: LiveData<List<ImageVO>>?) {
-    list?.value?.run {
+fun setImageList(recyclerView: RecyclerView, list: LiveData<List<ImageVO>>) {
+    list.value?.run {
         (recyclerView.adapter as? ImageListAdapter)?.addMoreItem(this)
     }
 }
