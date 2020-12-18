@@ -17,7 +17,7 @@ open class ExceptionHandler {
             return CoroutineExceptionHandler { coroutineContext, throwable ->
                 throwable.printStackTrace()
                 coroutineContext.cancel()
-                _exception.value = throwable
+                _exception.postValue(throwable)
             }
         }
 
