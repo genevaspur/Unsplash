@@ -1,6 +1,7 @@
 package com.example.unsplash.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.ViewDataBinding
 import com.example.unsplash.BR
 import com.example.unsplash.viewmodel.BaseViewModel
@@ -17,8 +18,13 @@ abstract class BindingActivity<VM: BaseViewModel, V: ViewDataBinding> : BaseActi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm = bindViewModel()
+        vm.error.observe(this, {handleThrowable(it)})
         binding.setVariable(BR.vm, vm)
         binding.lifecycleOwner = this
+    }
+
+    private fun handleThrowable(throwable: Throwable) {
+        showErrorAlert(throwable.toString())
     }
 
 

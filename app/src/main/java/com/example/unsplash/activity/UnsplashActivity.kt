@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.unsplash.R
 import com.example.unsplash.adapter.BaseImageListAdapter
 import com.example.unsplash.adapter.ImageListAdapter
+import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.database.UnsplashDB
 import com.example.unsplash.database.entity.UnsplashEntity
 import com.example.unsplash.databinding.ActivityUnsplashBinding
@@ -38,7 +39,7 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
     private lateinit var imageListAdapter: ImageListAdapter
 
     override fun setContentId() = R.layout.activity_unsplash
-    override fun bindViewModel() = UnsplashViewModel(application, UnsplashRepository(application))
+    override fun bindViewModel() = UnsplashViewModel(application, UnsplashRepository(application), ExceptionHandler())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -2,26 +2,48 @@ package com.example.unsplash.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.example.unsplash.common.exception.ExceptionHandler
 import kotlinx.coroutines.*
+import java.lang.Exception
 
 abstract class BaseViewModel(
-        application: Application
+        application: Application,
+        val exceptionHandler: ExceptionHandler
 ) : AndroidViewModel(application) {
 
     private var job: Job? = null
+    private var errorObserver: Observer<Throwable>
+
+    protected var _error = MutableLiveData<Throwable>()
+
+    val error: LiveData<Throwable> get() = _error
 
     init {
-        // TODO
+        exceptionHandler.exception.observeForever(Observer<Throwable> {
+            _error.value = it
+        }.apply {
+            errorObserver = this
+        })
     }
 
     override fun onCleared() {
         super.onCleared()
         job?.cancelChildren()
         job = null
+        exceptionHandler.exception.removeObserver(errorObserver)
     }
 
-    fun launchCoroutine(block: suspend() -> Unit) {
-        job = CoroutineScope(Dispatchers.Main).launch {
+    fun launchMainCoroutine(block: suspend() -> Unit) {
+        job = CoroutineScope(exceptionHandler.mainScope).launch {
+            launch { block() }.join()
+        }
+    }
+
+    fun launchIoCoroutine(block: suspend() -> Unit) {
+        job = CoroutineScope(exceptionHandler.ioScope).launch {
             launch { block() }.join()
         }
     }
