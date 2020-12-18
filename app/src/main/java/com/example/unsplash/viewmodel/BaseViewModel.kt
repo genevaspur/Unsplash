@@ -17,7 +17,7 @@ abstract class BaseViewModel(
     private var job: Job? = null
     private var errorObserver: Observer<Throwable>
 
-    protected var _error = MutableLiveData<Throwable>()
+    private var _error = MutableLiveData<Throwable>()
 
     val error: LiveData<Throwable> get() = _error
 
