@@ -7,14 +7,15 @@ import androidx.lifecycle.LiveData
 import com.example.unsplash.common.ListLiveData
 import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.database.entity.UnsplashEntity
+import com.example.unsplash.repository.IUnsplashRepository
 import com.example.unsplash.repository.UnsplashRepository
 import com.example.unsplash.vo.ImageVO
 import java.lang.RuntimeException
 
 class UnsplashViewModel(
-        application: Application,
-        private val unsplashRepository: UnsplashRepository,
-        exceptionHandler: ExceptionHandler
+    application: Application,
+    private val unsplashRepository: IUnsplashRepository,
+    exceptionHandler: ExceptionHandler
 ) : BaseViewModel(application, exceptionHandler) {
 
     val imageData: LiveData<List<ImageVO>> get() = _imageData

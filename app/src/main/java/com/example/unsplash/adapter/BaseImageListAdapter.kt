@@ -25,7 +25,6 @@ abstract class BaseImageListAdapter<T: Any>(
     abstract fun getDiffCallback(): DiffUtilCallback
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(context).inflate(layoutId, parent, false)
         return ImageViewHolder(DataBindingUtil.inflate(LayoutInflater.from(context), layoutId, parent, false))
     }
 

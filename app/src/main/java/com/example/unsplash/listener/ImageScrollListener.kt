@@ -15,11 +15,11 @@ class ImageScrollListener(
         var isLoading = false
     }
 
-    var visibleThreshold = 5
-    var visibleItemCount = 0
-    var totalItemCount = 0
-    var firstVisibleItem = 0
-    var lastVisibleItem = 0
+    private var visibleThreshold = 5
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+    private var firstVisibleItem = 0
+    private var lastVisibleItem = 0
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)

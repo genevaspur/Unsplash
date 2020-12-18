@@ -60,15 +60,6 @@ class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>
         rv.adapter = imageListAdapter
 
         vm.getPhotoList(10)
-
-        vm.imageData.observe(this) {
-            imageListAdapter.addMoreItem(it)
-        }
-
-        selectBtn.setOnClickListener {
-            vm.selectDbAll()
-        }
-
     }
 
     private val onLoadMoreListener = object:ImageScrollListener.OnLoadMoreListener {

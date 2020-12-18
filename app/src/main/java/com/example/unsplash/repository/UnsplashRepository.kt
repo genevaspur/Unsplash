@@ -15,36 +15,35 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UnsplashRepository(application: Application) {
+interface IUnsplashRepository {
+    fun getAll(): LiveData<List<UnsplashEntity>>
+    fun insert(unsplashEntity: UnsplashEntity)
+    fun deleteAll()
+    fun searchPhotoList(count: Int, _imageData: ListLiveData<ImageVO, List<ImageVO>>)
+}
 
-    private val unsplashDB = UnsplashDB.getInstance(application)
-    private val unsplashDao: UnsplashDao = unsplashDB.unsplashDao()
+class UnsplashRepository(application: Application) : IUnsplashRepository {
 
-    private lateinit var retrofitService : RetrofitService
+    private val unsplashDao: UnsplashDao = UnsplashDB.getInstance(application).unsplashDao()
 
-    fun getAll(): LiveData<List<UnsplashEntity>> {
+    private val retrofitService = RetrofitClient.getInstance().run {
+        create(RetrofitService::class.java)
+    }
+
+
+    override fun getAll(): LiveData<List<UnsplashEntity>> {
         return unsplashDao.getAll()
     }
 
-    init {
-        initRetrofit()
-    }
-
-    private fun initRetrofit() {
-        retrofitService = RetrofitClient.getInstance().run {
-            create(RetrofitService::class.java)
-        }
-    }
-
-    fun insert(unsplashEntity: UnsplashEntity) {
+    override fun insert(unsplashEntity: UnsplashEntity) {
         unsplashDao.insert(unsplashEntity)
     }
 
-    fun deleteAll() {
+    override fun deleteAll() {
         unsplashDao.deleteAll()
     }
 
-    fun searchPhotoList(count: Int, _imageData: ListLiveData<ImageVO, List<ImageVO>>) {
+    override fun searchPhotoList(count: Int, _imageData: ListLiveData<ImageVO, List<ImageVO>>) {
 
         retrofitService.requestRandomPhoto(client_id, count).enqueue(object : Callback<List<ImageVO>> {
             override fun onFailure(call: Call<List<ImageVO>>, t: Throwable) {
