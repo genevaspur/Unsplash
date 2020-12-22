@@ -13,7 +13,8 @@ import java.lang.Exception
 
 abstract class BaseViewModel(
     application: Application,
-    private val exceptionHandler: ExceptionHandler
+    private val exceptionHandler: ExceptionHandler,
+    private var updateViewModel: IBaseRepository = BaseRepository
 ) : AndroidViewModel(application) {
 
     private var job: Job? = null
@@ -52,8 +53,14 @@ abstract class BaseViewModel(
 
     fun updateApplication(force: Boolean) {
 
+        launchMainCoroutine {
+            updateViewModel.updateApplication()
+        }
+
         if (force) {
             // 강제 업데이트
+
+
 
 
         } else {

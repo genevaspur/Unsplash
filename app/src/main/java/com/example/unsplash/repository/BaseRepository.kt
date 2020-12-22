@@ -26,7 +26,7 @@ interface IBaseRepository {
     suspend fun updateApplication()
 }
 
-class BaseRepository : IBaseRepository {
+object BaseRepository : IBaseRepository {
 
     private val versionCheck = RetrofitClient.getInstance(BuildConfig.UPDATE_BASE_URL).run {
         create(IVersionCheck::class.java)
