@@ -6,12 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.unsplash.common.exception.ExceptionHandler
+import com.example.unsplash.repository.BaseRepository
+import com.example.unsplash.repository.IBaseRepository
 import kotlinx.coroutines.*
 import java.lang.Exception
 
 abstract class BaseViewModel(
-        application: Application,
-        val exceptionHandler: ExceptionHandler
+    application: Application,
+    private val exceptionHandler: ExceptionHandler
 ) : AndroidViewModel(application) {
 
     private var job: Job? = null
@@ -47,5 +49,25 @@ abstract class BaseViewModel(
             launch { block() }.join()
         }
     }
+
+    fun updateApplication(force: Boolean) {
+
+        if (force) {
+            // 강제 업데이트
+
+
+        } else {
+            // 업데이트
+
+
+        }
+
+    }
+
+//    fun downloadApk() {
+//        launchMainCoroutine {
+//            baseRepository.updateApplication()
+//        }
+//    }
 
 }

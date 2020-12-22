@@ -7,6 +7,7 @@ buildscript {
 
     ext {
         lifecycleVersion = "2.2.0"
+        okHttpVersion = "4.7.2"
     }
 
 }
@@ -20,13 +21,17 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "V1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -41,6 +46,28 @@ android {
     dataBinding {
         enabled true
     }
+
+    flavorDimensions "flavors"
+    productFlavors {
+        dev {
+            dimension "flavors"
+            versionCode 1
+            versionName "1.0"
+            applicationIdSuffix ".dev"
+
+            buildConfigField "String", "UPDATE_BASE_URL", '"http://10.10.10.103:8080/"'
+            buildConfigField "String", "VERSION_CHECK", '"unsplash_test.html"'
+
+            manifestPlaceholders=[appLabel:"UNSPLASH_TEST"]
+        }
+    }
+
+    sourceSets {
+        dev {
+            java.srcDirs = ["src/main/java", "src/dev/java"]
+        }
+    }
+
 }
 
 dependencies {
@@ -66,6 +93,10 @@ dependencies {
     kapt                        "androidx.room:room-compiler:2.2.5"
     implementation              "androidx.room:room-runtime:2.2.5"
     annotationProcessor         "androidx.room:room-compiler:2.2.5"
+
+    api              "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    api              "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    api              "com.squareup.okhttp3:okhttp-urlconnection:$okHttpVersion"
 
     /*  */
 

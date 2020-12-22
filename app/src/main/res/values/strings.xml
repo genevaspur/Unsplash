@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Unsplash</string>
+    <string name="msg_force_update">필수 업데이트가 필요합니다.</string>
+    <string name="msg_update">업데이트가 있습니다.</string>
+    <string name="negative_btn">싫어요</string>
+    <string name="positive_btn">좋아요</string>
 </resources>

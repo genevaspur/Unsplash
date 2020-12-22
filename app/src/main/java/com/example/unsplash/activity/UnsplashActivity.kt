@@ -33,7 +33,7 @@ import retrofit2.Retrofit
 const val client_id = "RRhsjwbgzMem817xMG21l98m1P9Fj0z5c2UE3mNOFSw"  // 2
 
 
-class MainActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>() {
+class UnsplashActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBinding>() {
 
 
     private lateinit var imageListAdapter: ImageListAdapter
