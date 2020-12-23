@@ -1,6 +1,7 @@
 package com.example.unsplash.repository
 
 import android.app.Application
+import android.media.Image
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,6 +16,7 @@ import com.example.unsplash.retrofit.RetrofitClient
 import com.example.unsplash.retrofit.RetrofitService
 import com.example.unsplash.vo.ImageVO
 import com.example.unsplash.vo.VersionVO
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,8 +28,6 @@ interface IUnsplashRepository {
     fun insert(unsplashEntity: UnsplashEntity)
     fun deleteAll()
     fun searchPhotoList(count: Int, _imageData: ListLiveData<ImageVO, List<ImageVO>>)
-    suspend fun checkVersion(_updateData: MutableLiveData<VersionVO>)
-    suspend fun updateApplication()
 }
 
 class UnsplashRepository(application: Application) : IUnsplashRepository {
@@ -69,26 +69,6 @@ class UnsplashRepository(application: Application) : IUnsplashRepository {
             }
         })
 
-    }
-
-    override suspend fun checkVersion(_updateData: MutableLiveData<VersionVO>) {
-
-        val response = versionCheck.getVersion()
-        if (!response.isSuccessful) throw Exception(response.code().toString())
-
-        val versionVO: VersionVO? = response.body()
-
-        versionVO?.run {
-            needUpdate = versionCode > BuildConfig.VERSION_CODE
-        }
-
-        _updateData.postValue(versionVO)
-
-    }
-
-    override suspend fun updateApplication() {
-        val response = versionCheck.downloadApk()
-        Log.i("unsplash", response.toString())
     }
 
 }

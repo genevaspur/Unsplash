@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.unsplash.common.exception.ExceptionHandler
+import com.example.unsplash.repository.BaseRepository
 import com.example.unsplash.repository.IUnsplashRepository
 import com.example.unsplash.vo.VersionVO
 
@@ -19,7 +20,7 @@ class SplashViewModel (
 
     fun checkUpdate() {
         launchMainCoroutine {
-            unsplashRepository.checkVersion(_updateState)
+            BaseRepository.checkVersion(_updateState)
         }
     }
 

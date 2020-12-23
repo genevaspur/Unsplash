@@ -14,9 +14,7 @@ import com.example.unsplash.vo.VersionVO
 
 class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+    override fun start() {
 
         vm.updateState.observe(this, {
             updateHandler(it)

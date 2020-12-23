@@ -53,28 +53,24 @@ abstract class BaseViewModel(
 
     fun updateApplication(force: Boolean) {
 
-        launchMainCoroutine {
-            updateViewModel.updateApplication()
-        }
-
         if (force) {
             // 강제 업데이트
-
+            downloadApk()
 
 
 
         } else {
             // 업데이트
-
+            downloadApk()
 
         }
 
     }
 
-//    fun downloadApk() {
-//        launchMainCoroutine {
-//            baseRepository.updateApplication()
-//        }
-//    }
+    private fun downloadApk() {
+        launchIoCoroutine {
+            updateViewModel.updateApplication()
+        }
+    }
 
 }

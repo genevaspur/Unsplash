@@ -41,9 +41,7 @@ class UnsplashActivity : BindingActivity<UnsplashViewModel, ActivityUnsplashBind
     override fun setContentId() = R.layout.activity_unsplash
     override fun bindViewModel() = UnsplashViewModel(application, UnsplashRepository(application), ExceptionHandler())
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun start() {
         val linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
         imageListAdapter = ImageListAdapter(this, linearLayoutManager, onLoadMoreListener)

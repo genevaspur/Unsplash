@@ -13,6 +13,6 @@ interface IVersionCheck {
     suspend fun getVersion(): Response<VersionVO>
 
     @GET("aa.PNG")
-    suspend fun downloadApk(): Call<ResponseBody>
+    fun downloadApk(): Call<ResponseBody>
 
 }

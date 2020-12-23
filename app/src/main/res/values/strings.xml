@@ -4,4 +4,7 @@
     <string name="msg_update">업데이트가 있습니다.</string>
     <string name="negative_btn">싫어요</string>
     <string name="positive_btn">좋아요</string>
+    <string name="permission_denied">권한이 없으면 앱을 이용하실 수 없습니다.</string>
+    <string name="permission_message_external_storage">앱 업데이트 및 사진 저장 시 필요한 권한입니다.<br/>권한이 없으면 앱을 이용하실 수 없습니다.</string>
+    <string name="terminate_app">앱 종료</string>
 </resources>
