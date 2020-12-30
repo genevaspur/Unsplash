@@ -3,14 +3,16 @@ package com.example.unsplash.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.DialogFragment
+import com.example.unsplash.BuildConfig
 import com.example.unsplash.R
 import com.example.unsplash.util.PermissionUtil
+import com.example.unsplash.util.PreferenceUtil
 import kotlin.system.exitProcess
 
 abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
@@ -20,9 +22,15 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
+
+        lateinit var prefs: PreferenceUtil
+
+        private const val PREF_PERMISSION = "PERMISSION"
     }
 
     protected lateinit var binding: V
+
+    private var needPermission = true
 
     protected abstract fun start()
 
@@ -30,10 +38,17 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, setContentId())
         binding.lifecycleOwner = this
+        prefs = PreferenceUtil(this)
 
-        val needPermission = PermissionUtil.checkPermission(this, PERMISSIONS)
+        needPermission = PermissionUtil.checkPermission(this, PERMISSIONS)
+
+    }
+
+    // TODO START -> ?
+    override fun onStart() {
+        super.onStart()
         if (!needPermission) start()
-
+        PermissionUtil.checkPermission(this, PERMISSIONS)
     }
 
     override fun onRequestPermissionsResult(
@@ -43,27 +58,61 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        grantResults.forEach {
-            if (it != PackageManager.PERMISSION_GRANTED) {
+        var idx = 0
+        var permissionGranted = true
+        grantResults.forEach { result ->
+
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                val requestPermission: Boolean = shouldShowRequestPermissionRationale(permissions[idx])
+                if (!prefs.getBoolean(PREF_PERMISSION)) prefs.setBoolean(PREF_PERMISSION, requestPermission)
+                idx++
+                permissionGranted = false
+
+                if (!requestPermission && prefs.getBoolean(PREF_PERMISSION)) {
+                    showPermissionPermanentlyDeniedAlert()
+                    return
+                }
+
                 showPermissionDeniedAlert()
                 return
             }
+
         }
+
+        if (permissionGranted) start()
 
     }
 
-    protected fun showPermissionDeniedAlert() {
+    private fun showPermissionPermanentlyDeniedAlert() {
+        AlertDialog.Builder(this)
+                .setMessage(R.string.permission_denied)
+                .setCancelable(true)
+                .setPositiveButton(R.string.terminate) { _, _ -> terminateApp()}
+                .setNegativeButton(R.string.open_settings) { _, _ -> openSettings()}
+                .create()
+                .show()
+    }
+
+    private fun showPermissionDeniedAlert() {
         AlertDialog.Builder(this)
             .setMessage(R.string.permission_denied)
-            .setCancelable(false)
-            .setPositiveButton(R.string.terminate_app) { _, _ -> terminateApp() }
+            .setCancelable(true)
+            .setPositiveButton(R.string.terminate) { _, _ -> terminateApp() }
+            .setNegativeButton(R.string.msg_request_permission) { _, _ -> PermissionUtil.checkPermission(this, PERMISSIONS)}
             .create()
             .show()
     }
 
     protected abstract fun setContentId(): Int
 
-    protected fun terminateApp() {
+    protected fun openSettings() {
+        startActivity(Intent(
+            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+        ))
+    }
+
+    private fun terminateApp() {
         finishAffinity()
         System.runFinalization()
         exitProcess(0)

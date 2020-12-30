@@ -15,8 +15,6 @@ fun writeResponseBodyToDisk(responseBody: ResponseBody): Boolean {
         try {
 
 
-
-
             return true
         } catch (e: IOException) {
             return false

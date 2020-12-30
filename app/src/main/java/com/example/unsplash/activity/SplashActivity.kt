@@ -1,20 +1,23 @@
 package com.example.unsplash.activity
 
-import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import com.example.unsplash.R
 import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.databinding.ActivitySplashBinding
-import com.example.unsplash.repository.UnsplashRepository
-import com.example.unsplash.viewmodel.BaseViewModel
+import com.example.unsplash.repository.SplashRepository
+import com.example.unsplash.util.DownloadNotificationUtil
 import com.example.unsplash.viewmodel.SplashViewModel
 import com.example.unsplash.vo.VersionVO
 
 class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>() {
 
-    override fun start() {
+    private val downloadNotificationUtil by lazy {
+        DownloadNotificationUtil(application)
+    }
+
+    public override fun start() {
+        super.start()
 
         vm.updateState.observe(this, {
             updateHandler(it)
@@ -22,9 +25,13 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
 
         vm.checkUpdate()
 
+        vm.downloadState.observe(this, {
+            showDownloadState(it)
+        })
+
     }
 
-    override fun bindViewModel() = SplashViewModel(application, UnsplashRepository(application), ExceptionHandler())
+    override fun bindViewModel() = SplashViewModel(application, SplashRepository(), ExceptionHandler())
 
     override fun setContentId() = R.layout.activity_splash
 
@@ -38,6 +45,25 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
     private fun updateHandler(vo: VersionVO) {
         if (vo.needUpdate) showUpdateAlert(vo.force, UnsplashActivity::class.java)
         else changeActivityWithDelay()
+    }
+
+    private fun showDownloadState(progress: Int) {
+        downloadNotificationUtil.updateNotification(progress)
+    }
+
+    private fun <T: BaseActivity<*>> showUpdateAlert(force: Boolean, targetActivity: Class<T>) {
+
+        val message: String = if (force) getString(R.string.msg_force_update)
+        else getString(R.string.msg_update)
+
+        AlertDialog.Builder(this)
+                .setMessage(message)
+                .setCancelable(!force)
+                .setPositiveButton(R.string.positive_btn) { _, _ -> vm.updateApplication(force) }
+                .isCancelable(force) { changeActivity(targetActivity) }
+                .create()
+                .show()
+
     }
 
 }

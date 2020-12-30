@@ -9,12 +9,11 @@ import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.repository.BaseRepository
 import com.example.unsplash.repository.IBaseRepository
 import kotlinx.coroutines.*
-import java.lang.Exception
 
 abstract class BaseViewModel(
     application: Application,
     private val exceptionHandler: ExceptionHandler,
-    private var updateViewModel: IBaseRepository = BaseRepository
+    private var baseRepository: IBaseRepository = BaseRepository
 ) : AndroidViewModel(application) {
 
     private var job: Job? = null
@@ -48,28 +47,6 @@ abstract class BaseViewModel(
     fun launchIoCoroutine(block: suspend() -> Unit) {
         job = CoroutineScope(exceptionHandler.ioScope).launch {
             launch { block() }.join()
-        }
-    }
-
-    fun updateApplication(force: Boolean) {
-
-        if (force) {
-            // 강제 업데이트
-            downloadApk()
-
-
-
-        } else {
-            // 업데이트
-            downloadApk()
-
-        }
-
-    }
-
-    private fun downloadApk() {
-        launchIoCoroutine {
-            updateViewModel.updateApplication()
         }
     }
 
