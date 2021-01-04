@@ -21,7 +21,7 @@ import java.io.File
 import java.lang.Exception
 
 interface ISplashRepository {
-    suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _intent: MutableLiveData<Intent>)
+    suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _updateFile: MutableLiveData<File>, fileDir: File)
 }
 
 class SplashRepository(application: Application) : ISplashRepository {
@@ -30,7 +30,10 @@ class SplashRepository(application: Application) : ISplashRepository {
         create(IVersionCheck::class.java)
     }
 
-    override suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _intent: MutableLiveData<Intent>) {
+    override suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _updateFile: MutableLiveData<File>, fileDir: File) {
+
+        val file = File("$fileDir/app-dev-debug.apk")
+        if (file.exists()) file.delete()
 
         versionCheck.downloadApk().enqueue(object : Callback<ResponseBody> {
 
@@ -43,26 +46,12 @@ class SplashRepository(application: Application) : ISplashRepository {
                         val totalSize = response.body()?.contentLength() ?: 0
                         val inputStream = response.body()?.byteStream()
                         CoroutineScope(Dispatchers.IO).launch {
-//                            inputStream?.saveToFile("http://10.10.10.103:8080/app-dev-debug.apk")
-
-                            launch { inputStream?.saveToFile("http://10.10.10.103:8080/test.ipa") }.join()
-
-
+                            launch {
+                                inputStream?.saveToFile("$fileDir/app-dev-debug.apk")
+                            }.join()
                         }
 
-                        val intent = Intent()
-                        val file = File(Environment.getExternalStorageDirectory().toString() + "/app-dev-debug.apk")
-                        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive") // TODO
-                        _intent.postValue(intent)
-
-
-
-
-
-
-
-
-//                        val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+                        _updateFile.postValue(file)
 
                     } catch (e: Exception) {
                         Log.i("unsplash", e.printStackTrace().toString())

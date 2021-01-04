@@ -112,7 +112,7 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
         ))
     }
 
-    private fun terminateApp() {
+    protected fun terminateApp() {
         finishAffinity()
         System.runFinalization()
         exitProcess(0)

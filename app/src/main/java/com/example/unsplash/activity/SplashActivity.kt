@@ -1,5 +1,7 @@
 package com.example.unsplash.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,7 +21,7 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
     }
 
     override fun setContentId() = R.layout.activity_splash
-    override fun bindViewModel() = SplashViewModel(application, SplashRepository(application), ExceptionHandler())
+    override fun bindViewModel() = SplashViewModel(application, SplashRepository(application), ExceptionHandler(), getExternalFilesDir(null)!!)
 
     public override fun start() {
         super.start()
@@ -39,11 +41,13 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
             Toast.makeText(this, "Pressed", Toast.LENGTH_SHORT).show()
         }
 
-        vm.intent.observe(this, {
-            startActivity(it)
+        vm.updateFile.observe(this, {
+            val intent = Intent()
+            intent.setDataAndType(Uri.fromFile(it), "application/vnd.android.package-archive")
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
         })
-
-
 
     }
 
@@ -63,7 +67,7 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
         downloadNotificationUtil.updateNotification(progress)
     }
 
-    private fun <T: BaseActivity<*>> showUpdateAlert(force: Boolean, targetActivity: Class<T>) {
+    private fun <T : BaseActivity<*>> showUpdateAlert(force: Boolean, targetActivity: Class<T>) {
 
         val message: String = if (force) getString(R.string.msg_force_update)
         else getString(R.string.msg_update)

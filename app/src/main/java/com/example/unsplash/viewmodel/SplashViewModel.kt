@@ -8,11 +8,13 @@ import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.repository.BaseRepository
 import com.example.unsplash.repository.ISplashRepository
 import com.example.unsplash.vo.VersionVO
+import java.io.File
 
 class SplashViewModel (
     application: Application,
     private val splashRepository: ISplashRepository,
-    exceptionHandler: ExceptionHandler
+    exceptionHandler: ExceptionHandler,
+    private val fileDir: File
 ) : BaseViewModel(application,  exceptionHandler) {
 
     val updateState: LiveData<VersionVO> get() = _updateState
@@ -21,9 +23,8 @@ class SplashViewModel (
     val downloadState: LiveData<Int> get() = _downloadState
     private var _downloadState = MutableLiveData<Int>()
 
-    // FIXME: 12/30/20 TEST
-    val intent: LiveData<Intent> get() = _intent
-    private var _intent = MutableLiveData<Intent>()
+    val updateFile: LiveData<File> get() = _updateFile
+    private var _updateFile = MutableLiveData<File>()
 
     fun checkUpdate() {
         launchMainCoroutine {
@@ -49,7 +50,7 @@ class SplashViewModel (
     private fun downloadApk() {
 
         launchIoCoroutine {
-            splashRepository.updateApplication(_downloadState, _intent)
+            splashRepository.updateApplication(_downloadState, _updateFile, fileDir)
         }
 
     }

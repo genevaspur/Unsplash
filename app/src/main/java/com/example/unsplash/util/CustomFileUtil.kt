@@ -28,7 +28,5 @@ fun writeResponseBodyToDisk(responseBody: ResponseBody): Boolean {
 }
 
 fun InputStream.saveToFile(path: String) {
-    val directory = Environment.getExternalStorageDirectory().toString()
-    val fileName = path.substring(path.lastIndexOf("/"))
-    File("$directory$fileName").outputStream().use { this.copyTo(it) }
+    File(path).outputStream().use { this.copyTo(it) }
 }
