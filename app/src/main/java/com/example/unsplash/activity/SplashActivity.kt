@@ -1,6 +1,7 @@
 package com.example.unsplash.activity
 
 import android.os.Handler
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.unsplash.R
 import com.example.unsplash.common.exception.ExceptionHandler
@@ -9,12 +10,16 @@ import com.example.unsplash.repository.SplashRepository
 import com.example.unsplash.util.DownloadNotificationUtil
 import com.example.unsplash.viewmodel.SplashViewModel
 import com.example.unsplash.vo.VersionVO
+import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>() {
 
     private val downloadNotificationUtil by lazy {
         DownloadNotificationUtil(application)
     }
+
+    override fun setContentId() = R.layout.activity_splash
+    override fun bindViewModel() = SplashViewModel(application, SplashRepository(application), ExceptionHandler())
 
     public override fun start() {
         super.start()
@@ -29,11 +34,18 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
             showDownloadState(it)
         })
 
+        // FIXME: 12/30/20 TEST
+        button.setOnClickListener {
+            Toast.makeText(this, "Pressed", Toast.LENGTH_SHORT).show()
+        }
+
+        vm.intent.observe(this, {
+            startActivity(it)
+        })
+
+
+
     }
-
-    override fun bindViewModel() = SplashViewModel(application, SplashRepository(), ExceptionHandler())
-
-    override fun setContentId() = R.layout.activity_splash
 
     private fun changeActivityWithDelay() {
         Handler().postDelayed({

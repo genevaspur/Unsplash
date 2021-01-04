@@ -6,6 +6,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Streaming
 
 interface IVersionCheck {
@@ -14,7 +15,8 @@ interface IVersionCheck {
     suspend fun getVersion(): Response<VersionVO>
 
     @GET("app-dev-debug.apk")
-//    @GET("aa.PNG")
+//    @Headers("Accept-Encoding: *", "Content-Type: font/ttf")
+//    @GET("test.ipa")
     @Streaming
     fun downloadApk(): Call<ResponseBody>
 

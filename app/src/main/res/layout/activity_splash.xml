@@ -13,6 +13,7 @@
         tools:context=".activity.SplashActivity">
 
         <ImageView
+            android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -23,6 +24,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/img_disney_logo"
             android:contentDescription="@string/app_name" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            app:layout_constraintTop_toBottomOf="@+id/image"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

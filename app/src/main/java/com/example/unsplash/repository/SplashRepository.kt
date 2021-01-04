@@ -1,27 +1,36 @@
 package com.example.unsplash.repository
 
+import android.app.Application
+import android.content.Intent
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.unsplash.BuildConfig
 import com.example.unsplash.retrofit.IVersionCheck
 import com.example.unsplash.retrofit.RetrofitClient
+import com.example.unsplash.util.saveToFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.lang.Exception
 
 interface ISplashRepository {
-    suspend fun updateApplication(_downloadState: MutableLiveData<Int>)
+    suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _intent: MutableLiveData<Intent>)
 }
 
-class SplashRepository() : ISplashRepository {
+class SplashRepository(application: Application) : ISplashRepository {
 
     private val versionCheck = RetrofitClient.getInstance(BuildConfig.UPDATE_BASE_URL).run {
         create(IVersionCheck::class.java)
     }
 
-    override suspend fun updateApplication(_downloadState: MutableLiveData<Int>) {
+    override suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _intent: MutableLiveData<Intent>) {
 
         versionCheck.downloadApk().enqueue(object : Callback<ResponseBody> {
 
@@ -29,26 +38,30 @@ class SplashRepository() : ISplashRepository {
                 if (response.isSuccessful) {
 
                     try {
+
+                        // TODO Progress
+                        val totalSize = response.body()?.contentLength() ?: 0
                         val inputStream = response.body()?.byteStream()
+                        CoroutineScope(Dispatchers.IO).launch {
+//                            inputStream?.saveToFile("http://10.10.10.103:8080/app-dev-debug.apk")
 
-                        response.body()?.let {
+                            launch { inputStream?.saveToFile("http://10.10.10.103:8080/test.ipa") }.join()
 
-                            val byte = byteArrayOf((1024 * 4).toByte())
-                            var total: Long = 0
-                            inputStream?.read(byte)?.run {
-                                while (this != -1) {
-
-                                    total += this
-
-                                    val progress = ((total * 100).toDouble() / it.contentLength().toDouble()).toInt()
-                                    _downloadState.postValue(progress)
-
-                                }
-                            }
 
                         }
 
-//                        inputStream?.saveToFile("http://10.10.10.103:8080/app-dev-debug.apk")
+                        val intent = Intent()
+                        val file = File(Environment.getExternalStorageDirectory().toString() + "/app-dev-debug.apk")
+                        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive") // TODO
+                        _intent.postValue(intent)
+
+
+
+
+
+
+
+
 //                        val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
 
                     } catch (e: Exception) {
