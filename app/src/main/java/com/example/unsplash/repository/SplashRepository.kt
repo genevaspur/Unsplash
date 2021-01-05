@@ -13,61 +13,43 @@ import com.example.unsplash.util.saveToFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.lang.Exception
+import java.lang.RuntimeException
 
 interface ISplashRepository {
     suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _updateFile: MutableLiveData<File>, fileDir: File)
 }
 
-class SplashRepository(application: Application) : ISplashRepository {
+class SplashRepository : ISplashRepository {
 
     private val versionCheck = RetrofitClient.getInstance(BuildConfig.UPDATE_BASE_URL).run {
         create(IVersionCheck::class.java)
     }
 
     override suspend fun updateApplication(_downloadState: MutableLiveData<Int>, _updateFile: MutableLiveData<File>, fileDir: File) {
+        withContext(Dispatchers.IO) {
+            //코루틴 내부에서 try catch 쓰지 않기 위해 변형
+            //코루틴 외부로 exception 전달하여 exceptionhandler에서 처리하도록 수정
 
-        val file = File("$fileDir/app-dev-debug.apk")
-        if (file.exists()) file.delete()
+            val file = File("$fileDir/app-dev-debug.apk")
+            if (file.exists()) file.delete()
 
-        versionCheck.downloadApk().enqueue(object : Callback<ResponseBody> {
+            val response = versionCheck.downloadApk()
 
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
+            if(!response.isSuccessful)    throw RuntimeException("통신오류")
 
-                    try {
+            val body = response.body() ?: throw RuntimeException("데이터 없음")
 
-                        // TODO Progress
-                        val totalSize = response.body()?.contentLength() ?: 0
-                        val inputStream = response.body()?.byteStream()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            launch {
-                                inputStream?.saveToFile("$fileDir/app-dev-debug.apk")
-                            }.join()
-                        }
-
-                        _updateFile.postValue(file)
-
-                    } catch (e: Exception) {
-                        Log.i("unsplash", e.printStackTrace().toString())
-                    }
-
-
-                } else {
-                    Log.d("unsplash", "SERVER_CONTACT_FAILED")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("unsplash", "$t")
-            }
-
-        })
+            val inputStream = body.byteStream()
+            inputStream.saveToFile("$fileDir/app-dev-debug.apk")
+            _updateFile.postValue(file)
+        }
     }
 
 }

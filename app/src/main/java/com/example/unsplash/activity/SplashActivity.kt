@@ -2,9 +2,12 @@ package com.example.unsplash.activity
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
+import com.example.unsplash.BuildConfig
 import com.example.unsplash.R
 import com.example.unsplash.common.exception.ExceptionHandler
 import com.example.unsplash.databinding.ActivitySplashBinding
@@ -21,7 +24,7 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
     }
 
     override fun setContentId() = R.layout.activity_splash
-    override fun bindViewModel() = SplashViewModel(application, SplashRepository(application), ExceptionHandler(), getExternalFilesDir(null)!!)
+    override fun bindViewModel() = SplashViewModel(application, SplashRepository(), ExceptionHandler(), getExternalFilesDir(null)!!)
 
     public override fun start() {
         super.start()
@@ -41,10 +44,24 @@ class SplashActivity : BindingActivity<SplashViewModel, ActivitySplashBinding>()
             Toast.makeText(this, "Pressed", Toast.LENGTH_SHORT).show()
         }
 
-        vm.updateFile.observe(this, {
-            val intent = Intent()
-            intent.setDataAndType(Uri.fromFile(it), "application/vnd.android.package-archive")
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        vm.updateFile.observe(this, { file ->
+            val intent = Intent(Intent.ACTION_VIEW)
+
+            val uri: Uri
+            //8.0 이상부터 파일 프로바이더 적용
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                uri = FileProvider.getUriForFile(
+                    application.applicationContext,
+                    BuildConfig.APPLICATION_ID +".fileprovider",
+                    file)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } else {
+                uri = Uri.fromFile(file)
+            }
+
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            intent.setDataAndType(uri, "application/vnd.android.package-archive") // TODO
+
             startActivity(intent)
             finish()
         })

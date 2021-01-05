@@ -1,6 +1,7 @@
 package com.example.unsplash.repository
 
 import android.app.Application
+import android.content.Context
 import android.media.Image
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -30,9 +31,9 @@ interface IUnsplashRepository {
     fun searchPhotoList(count: Int, _imageData: ListLiveData<ImageVO, List<ImageVO>>)
 }
 
-class UnsplashRepository(application: Application) : IUnsplashRepository {
+class UnsplashRepository(context: Context) : IUnsplashRepository {
 
-    private val unsplashDao: UnsplashDao = UnsplashDB.getInstance(application).unsplashDao()
+    private val unsplashDao: UnsplashDao = UnsplashDB.getInstance(context).unsplashDao()
 
     private val retrofitService = RetrofitClient.getInstance().run {
         create(RetrofitService::class.java)

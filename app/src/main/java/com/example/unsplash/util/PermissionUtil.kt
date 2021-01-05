@@ -17,6 +17,7 @@ object PermissionUtil {
             if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(activity, permissions.toTypedArray(), PERMISSION_REQUEST_CODE)
                 needPermission = true
+                break
             }
         }
 

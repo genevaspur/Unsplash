@@ -18,6 +18,6 @@ interface IVersionCheck {
 //    @Headers("Accept-Encoding: *", "Content-Type: font/ttf")
 //    @GET("test.ipa")
     @Streaming
-    fun downloadApk(): Call<ResponseBody>
+    suspend fun downloadApk(): Response<ResponseBody>
 
 }

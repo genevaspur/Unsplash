@@ -48,7 +48,6 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         if (!needPermission) start()
-        PermissionUtil.checkPermission(this, PERMISSIONS)
     }
 
     override fun onRequestPermissionsResult(
@@ -85,12 +84,12 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
 
     private fun showPermissionPermanentlyDeniedAlert() {
         AlertDialog.Builder(this)
-                .setMessage(R.string.permission_denied)
-                .setCancelable(true)
-                .setPositiveButton(R.string.terminate) { _, _ -> terminateApp()}
-                .setNegativeButton(R.string.open_settings) { _, _ -> openSettings()}
-                .create()
-                .show()
+            .setMessage(R.string.permission_denied)
+            .setCancelable(true)
+            .setPositiveButton(R.string.terminate) { _, _ -> terminateApp()}
+            .setNegativeButton(R.string.open_settings) { _, _ -> openSettings()}
+            .create()
+            .show()
     }
 
     private fun showPermissionDeniedAlert() {
@@ -120,10 +119,10 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
 
     protected fun showErrorAlert(msg: String) {
         val dialog = AlertDialog.Builder(this)
-                                .setMessage(msg)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.positive_btn, null)
-                                .create()
+            .setMessage(msg)
+            .setCancelable(false)
+            .setPositiveButton(R.string.positive_btn, null)
+            .create()
         dialog.show()
     }
 
